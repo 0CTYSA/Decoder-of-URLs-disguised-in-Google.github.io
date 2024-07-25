@@ -19,28 +19,28 @@ function analyzeURLs() {
     const decodedUrl = decodeURIComponent(url);
     const parser = document.createElement("a");
     parser.href = decodedUrl;
-    const domainAndPath = "https://" + parser.hostname + parser.pathname; // Combina dominio y camino
+    const domainAndPath = "https://" + parser.hostname + parser.pathname; // Combine domain and path
 
     if (!domainMap[domainAndPath]) {
       domainMap[domainAndPath] = {
         count: 0,
-        originalUrls: new Set(), // Para mostrar las URLs tal como se ingresaron
-        uniqueParams: new Set(), // Para guardar solo los parámetros únicos
+        originalUrls: new Set(), // To display the URLs as entered
+        uniqueParams: new Set(), // To save only the unique parameters
       };
     }
     domainMap[domainAndPath].count += 1;
-    domainMap[domainAndPath].originalUrls.add(url); // Agrega la URL original
-    domainMap[domainAndPath].uniqueParams.add(parser.search); // Agrega solo los parámetros
+    domainMap[domainAndPath].originalUrls.add(url); // Add the original URL
+    domainMap[domainAndPath].uniqueParams.add(parser.search); // Add only the parameters
   });
 
   const resultsBody = document.getElementById("resultsBody");
   resultsBody.innerHTML = "";
   Object.keys(domainMap).forEach((domainPath) => {
     const info = domainMap[domainPath];
-    const originalUrlsList = Array.from(info.originalUrls).join("<br>"); // Lista de URLs originales
+    const originalUrlsList = Array.from(info.originalUrls).join("<br>"); // List of original URLs
     const fullUrlsList = Array.from(info.uniqueParams)
       .map((params) => `${domainPath}${params}`)
-      .join("<br>"); // Lista de URLs decodificadas con parámetros
+      .join("<br>"); // List of decoded URLs with parameters
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${originalUrlsList}</td>
@@ -51,7 +51,7 @@ function analyzeURLs() {
   });
 
   document.getElementById("results").classList.remove("d-none");
-  document.getElementById("copyButton").classList.remove("d-none"); // Mostrar el botón
+  document.getElementById("copyButton").classList.remove("d-none"); // Show the button
 }
 
 function copyURLs() {
@@ -68,7 +68,7 @@ function copyURLs() {
 
   const urlsText = urls.join("\n");
 
-  // Crear un elemento de textarea para copiar las URLs
+  // Create a textarea element to copy the URLs
   const textArea = document.createElement("textarea");
   textArea.value = urlsText;
   document.body.appendChild(textArea);
@@ -76,5 +76,5 @@ function copyURLs() {
   document.execCommand("copy");
   document.body.removeChild(textArea);
 
-  alert("URLs copiadas al portapapeles");
+  alert("URLs copied to clipboard");
 }
