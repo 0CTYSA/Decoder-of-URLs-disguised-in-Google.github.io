@@ -14,27 +14,32 @@ function analyzeURLs() {
     const decodedUrl = decodeURIComponent(url);
     const parser = document.createElement("a");
     parser.href = decodedUrl;
-    const baseDomain = "https://" + parser.hostname;
+    const domainAndPath = "https://" + parser.hostname + parser.pathname; // Combina dominio y camino
 
-    if (!domainMap[baseDomain]) {
-      domainMap[baseDomain] = {
+    if (!domainMap[domainAndPath]) {
+      domainMap[domainAndPath] = {
         count: 0,
-        urls: new Set(), // Utilizamos un Set para evitar duplicados de URLs completas
+        originalUrls: new Set(), // Para mostrar las URLs tal como se ingresaron
+        uniqueParams: new Set(), // Para guardar solo los parámetros únicos
       };
     }
-    domainMap[baseDomain].count += 1;
-    domainMap[baseDomain].urls.add(decodedUrl); // Agrega la URL completa al conjunto
+    domainMap[domainAndPath].count += 1;
+    domainMap[domainAndPath].originalUrls.add(url); // Agrega la URL original
+    domainMap[domainAndPath].uniqueParams.add(parser.search); // Agrega solo los parámetros
   });
 
   const resultsBody = document.getElementById("resultsBody");
   resultsBody.innerHTML = "";
-  Object.keys(domainMap).forEach((domain) => {
-    const info = domainMap[domain];
-    const urlsList = Array.from(info.urls).join("<br>"); // Convierte el conjunto en un string separado por saltos de línea
+  Object.keys(domainMap).forEach((domainPath) => {
+    const info = domainMap[domainPath];
+    const originalUrlsList = Array.from(info.originalUrls).join("<br>"); // Lista de URLs originales
+    const fullUrlsList = Array.from(info.uniqueParams)
+      .map((params) => `${domainPath}${params}`)
+      .join("<br>"); // Lista de URLs decodificadas con parámetros
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${urlsList}</td>
-      <td>${domain}</td>
+      <td>${originalUrlsList}</td>
+      <td>${fullUrlsList}</td>
       <td>${info.count}</td>
     `;
     resultsBody.appendChild(row);
