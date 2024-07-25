@@ -4,6 +4,11 @@ document.addEventListener("DOMContentLoaded", function () {
     event.preventDefault();
     analyzeURLs();
   });
+
+  const copyButton = document.getElementById("copyButton");
+  copyButton.addEventListener("click", function () {
+    copyURLs();
+  });
 });
 
 function analyzeURLs() {
@@ -46,4 +51,30 @@ function analyzeURLs() {
   });
 
   document.getElementById("results").classList.remove("d-none");
+  document.getElementById("copyButton").classList.remove("d-none"); // Mostrar el botón
+}
+
+function copyURLs() {
+  const resultsBody = document.getElementById("resultsBody");
+  const rows = resultsBody.getElementsByTagName("tr");
+  let urls = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName("td");
+    if (cells.length > 1) {
+      urls.push(cells[1].textContent.split("<br>").join("\n"));
+    }
+  }
+
+  const urlsText = urls.join("\n");
+
+  // Crear un elemento de textarea para copiar las URLs
+  const textArea = document.createElement("textarea");
+  textArea.value = urlsText;
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textArea);
+
+  alert("URLs copiadas al portapapeles");
 }
